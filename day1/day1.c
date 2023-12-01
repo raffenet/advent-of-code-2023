@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static int aoc_is_digit(const char *str, char *digit);
+static int aoc_isdigit(const char *str, char *digit);
 
 int main(void)
 {
@@ -27,7 +27,7 @@ int main(void)
         /* search for first and last digit */
         for (int i = 0; i < strlen(token); i++) {
             char digit;
-            if (aoc_is_digit(&token[i], &digit)) {
+            if (aoc_isdigit(&token[i], &digit)) {
                 if (calibration[0] == 'x') {
                     calibration[0] = digit;
                     calibration[1] = digit;
@@ -47,38 +47,41 @@ int main(void)
 
 /*** utils ***/
 
-#define AOC_STRCMP(a, b) strncmp((a), (b), strlen((b)))
+static inline int aoc_strcmp(const char *a, const char *b)
+{
+    return strncmp(a, b, strlen(b));
+}
 
-static int aoc_is_digit(const char *str, char *digit)
+static int aoc_isdigit(const char *str, char *digit)
 {
     if (isdigit(str[0])) {
         *digit = str[0];
         return 1;
-    } else if (AOC_STRCMP(str, "one") == 0) {
+    } else if (aoc_strcmp(str, "one") == 0) {
         *digit = '1';
         return 1;
-    } else if (AOC_STRCMP(str, "two") == 0) {
+    } else if (aoc_strcmp(str, "two") == 0) {
         *digit = '2';
         return 1;
-    } else if (AOC_STRCMP(str, "three") == 0) {
+    } else if (aoc_strcmp(str, "three") == 0) {
         *digit = '3';
         return 1;
-    } else if (AOC_STRCMP(str, "four") == 0) {
+    } else if (aoc_strcmp(str, "four") == 0) {
         *digit = '4';
         return 1;
-    } else if (AOC_STRCMP(str, "five") == 0) {
+    } else if (aoc_strcmp(str, "five") == 0) {
         *digit = '5';
         return 1;
-    } else if (AOC_STRCMP(str, "six") == 0) {
+    } else if (aoc_strcmp(str, "six") == 0) {
         *digit = '6';
         return 1;
-    } else if (AOC_STRCMP(str, "seven") == 0) {
+    } else if (aoc_strcmp(str, "seven") == 0) {
         *digit = '7';
         return 1;
-    } else if (AOC_STRCMP(str, "eight") == 0) {
+    } else if (aoc_strcmp(str, "eight") == 0) {
         *digit = '8';
         return 1;
-    } else if (AOC_STRCMP(str, "nine") == 0) {
+    } else if (aoc_strcmp(str, "nine") == 0) {
         *digit = '9';
         return 1;
     }
