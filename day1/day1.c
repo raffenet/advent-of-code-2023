@@ -7,7 +7,6 @@ static int aoc_is_digit(const char *str, char *digit);
 
 int main(void)
 {
-    char calibration[3] = "xx";
     int sum = 0;
 
     FILE *fd = fopen("input.txt", "r");
@@ -18,15 +17,14 @@ int main(void)
     char *input = malloc(size + 1);
     fread(input, 1, size, fd);
     input[size - 1] = '\0';
-
     fclose(fd);
 
     char *tofree = input;
-
     char *token;
     while ((token = strsep(&input, "\n")) != NULL) {
+        char calibration[3] = "xx";
+
         /* search for first and last digit */
-        calibration[0] = 'x';
         for (int i = 0; i < strlen(token); i++) {
             char digit;
             if (aoc_is_digit(&token[i], &digit)) {
@@ -38,17 +36,17 @@ int main(void)
                 }
             }
         }
+
         sum += atoi(calibration);
     }
-
-    printf("sum = %d\n", sum);
-
     free(tofree);
 
+    printf("sum = %d\n", sum);
     return 0;
 }
 
-/* utils */
+/*** utils ***/
+
 #define AOC_STRCMP(a, b) strncmp((a), (b), strlen((b)))
 
 static int aoc_is_digit(const char *str, char *digit)
