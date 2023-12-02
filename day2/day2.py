@@ -5,7 +5,7 @@ input = open('input.txt', 'r')
 ref = {
     'red': 12,
     'green': 13,
-    'blue':14,
+    'blue': 14,
 }
 
 sum = 0
