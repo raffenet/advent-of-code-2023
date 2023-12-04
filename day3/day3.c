@@ -89,7 +89,7 @@ static int down(char *p)
     return 0;
 }
 
-static int back(char *p) {
+static int left(char *p) {
     if (!LEFT_EDGE(p - input)) {
         p--;
         return (issymbol(*p) || up(p) || down(p));
@@ -98,7 +98,7 @@ static int back(char *p) {
     return 0;
 }
 
-static int forward(char *p) {
+static int right(char *p) {
     if (!RIGHT_EDGE(p - input)) {
         p++;
         return (issymbol(*p) || up(p) || down(p));
@@ -117,7 +117,7 @@ static int check(char *p, size_t size)
 
     int is_part;
     for (int i = 0; i < size; i++,p++) {
-        is_part = up(p) || down(p) || back(p) || forward(p);
+        is_part = up(p) || down(p) || left(p) || right(p);
         if (is_part) {
             return part_num;
         }
