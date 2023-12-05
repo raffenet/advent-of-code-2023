@@ -13,7 +13,16 @@
 
 char *input;
 
-static int check(char *position, size_t len);
+static int check(char *p, size_t len);
+static int compare(const void *arg1, const void *arg2);
+
+struct gear {
+    int num;
+    char *gear;
+};
+static struct gear *gears;
+static int num_gears;
+static int capacity = 1024;
 
 int main(void)
 {
@@ -27,7 +36,10 @@ int main(void)
     input[size - 1] = '\0';
     fclose(fd);
 
-    int sum = 0;
+    gears = malloc(sizeof(struct gear) * capacity);
+    num_gears = 0;
+
+    int part_sum = 0;
     for (char *p = input; *p != '\0'; p++) {
         if (*p == '\n') {
             continue;
@@ -35,15 +47,33 @@ int main(void)
 
         if (isdigit(*p)) {
             size_t len = strspn(p, "0123456789");
-            /* do checking */
-            sum += check(p, len);
+            part_sum += check(p, len);
             p += len;
         }
     }
 
-    free(input);
+    /* sort by position of star */
+    qsort(gears, num_gears, sizeof(struct gear), &compare);
+    int sum = 0;
+    char *skip = NULL;
+    for (int i = 0; i < capacity - 1; i++) {
+        if (skip == gears[i].gear) {
+            continue;
+        }
 
-    printf("sum = %d\n", sum);
+        if ((gears[i].gear == gears[i+1].gear && i == capacity - 2) ||
+            (gears[i].gear == gears[i+1].gear && gears[i].gear != gears[i+2].gear)) {
+            sum += gears[i].num * gears[i+1].num;
+        } else if (gears[i].gear == gears[i+1].gear && gears[i].gear == gears[i+2].gear) {
+            skip = gears[i].gear;
+        }
+    }
+
+    free(input);
+    free(gears);
+
+    printf("parts = %d\n", part_sum);
+    printf("ratio = %d\n", sum);
 
     return 0;
 }
@@ -66,62 +96,109 @@ int main(void)
 #define IS_BOTTOM(x) ((x) > 98)
 #endif
 
-static int issymbol(char c)
+static inline int isgear(char c)
 {
-    return !isdigit(c) && c != '.';
+    return c == '*';
 }
 
-static int up(char *p)
+static inline int issymbol(char c)
 {
-    if (!IS_TOP(p - input)) {
-        return issymbol(*(p + UP));
+    return (!isdigit(c) && c != '.');
+}
+
+static void append_gear(char *p, int num)
+{
+    gears[num_gears].gear = p;
+    gears[num_gears].num = num;
+    num_gears++;
+    if (num_gears == capacity) {
+        capacity *= 2;
+        gears = realloc(gears, capacity * sizeof(struct gear));
+    }
+}
+
+static int up(char *p, int num)
+{
+    if (!IS_TOP(p - input) && issymbol(*(p + UP))) {
+        if (isgear(*(p + UP))) {
+            append_gear(p + UP, num);
+        }
+        return 1;
     }
 
     return 0;
 }
 
-static int down(char *p)
+static int down(char *p, int num)
 {
-    if (!IS_BOTTOM(p - input)) {
-        return issymbol(*(p + DOWN));
+    if (!IS_BOTTOM(p - input) && issymbol(*(p + DOWN))) {
+        if (isgear(*(p + DOWN))) {
+            append_gear(p + DOWN, num);
+        }
+        return 1;
     }
 
     return 0;
 }
 
-static int left(char *p) {
+static int left(char *p, int num) {
+    int ret = 0;
     if (!LEFT_EDGE(p - input)) {
         p--;
-        return (issymbol(*p) || up(p) || down(p));
+        if (issymbol(*p)) {
+            if (isgear(*p)) {
+                append_gear(p, num);
+            }
+            ret |= 1;
+        }
+        ret |= up(p, num);
+        ret |= down(p, num);
     }
 
-    return 0;
+    return ret;
 }
 
-static int right(char *p) {
+static int right(char *p, int num) {
+    int ret = 0;
     if (!RIGHT_EDGE(p - input)) {
         p++;
-        return (issymbol(*p) || up(p) || down(p));
+        if (issymbol(*p)) {
+            if (isgear(*p)) {
+                append_gear(p, num);
+            }
+            ret |= 1;
+        }
+        ret |= up(p, num);
+        ret |= down(p, num);
     }
 
-    return 0;
+    return ret;
 }
 
 static int check(char *p, size_t size)
 {
+    int is_part = 0;
     char *num = malloc(size + 1);
     strncpy(num, p, size);
     num[size] = '\0';
     int part_num = atoi(num);
     free(num);
 
-    int is_part;
     for (int i = 0; i < size; i++,p++) {
-        is_part = up(p) || down(p) || left(p) || right(p);
-        if (is_part) {
-            return part_num;
+        if (i == 0) {
+            is_part |= left(p, part_num);
+        }
+        is_part |= up(p, part_num);
+        is_part |= down(p, part_num);
+        if (i == size - 1) {
+            is_part |= right(p, part_num);
         }
     }
 
-    return 0;
+    return is_part ? part_num : 0;
+}
+
+static int compare(const void *arg1, const void *arg2)
+{
+    return ((const struct gear *)arg1)->gear - ((const struct gear *)arg2)->gear;
 }
