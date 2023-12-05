@@ -56,12 +56,12 @@ int main(void)
     qsort(gears, num_gears, sizeof(struct gear), &compare);
     int sum = 0;
     char *skip = NULL;
-    for (int i = 0; i < capacity - 1; i++) {
+    for (int i = 0; i < num_gears - 1; i++) {
         if (skip == gears[i].gear) {
             continue;
         }
 
-        if ((gears[i].gear == gears[i+1].gear && i == capacity - 2) ||
+        if ((gears[i].gear == gears[i+1].gear && i == num_gears - 2) ||
             (gears[i].gear == gears[i+1].gear && gears[i].gear != gears[i+2].gear)) {
             sum += gears[i].num * gears[i+1].num;
         } else if (gears[i].gear == gears[i+1].gear && gears[i].gear == gears[i+2].gear) {
