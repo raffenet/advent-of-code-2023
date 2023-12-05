@@ -21,8 +21,8 @@ for game in input.readlines():
     for each in range(game_id+1, game_id+1+matches):
         cards[each] += cards[game_id]
 
-print('part 1: ' + str(score))
-print('part 2: ' + str(sum(cards.values())))
+print('part 1:', score)
+print('part 2:', sum(cards.values()))
 
 input.close()
 
