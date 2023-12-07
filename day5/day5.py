@@ -22,7 +22,7 @@ locations = []
 for seed in seeds:
     for m in maps:
         for r in m:
-            if r.__contains__(seed):
+            if seed in r:
                 seed += m[r]
                 break
     locations.append(seed)
