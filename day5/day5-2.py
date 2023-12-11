@@ -20,7 +20,7 @@ for line in input.readlines():
     src = int(line.split()[1])
     length = int(line.split()[2])
     delta = src - dst
-    maps[-1].append((dst, dst + length, delta))
+    maps[-1].append((range(dst, dst + length), delta))
 maps.reverse()
 
 loc2 = -1
@@ -29,8 +29,8 @@ while loc2 == -1:
     orig = potential
     for m in maps:
         for r in m:
-            if potential >= r[0] and potential < r[1]:
-                potential += r[2];
+            if potential in r[0]:
+                potential += r[1];
                 break;
     for seed_range in seed_ranges:
         if potential in seed_range:
