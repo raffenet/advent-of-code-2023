@@ -122,7 +122,6 @@ for hand in hands:
 out = []
 for each in hand_types:
     hand_types[each].sort()
-    print(hand_types[each])
     out.extend(hand_types[each])
 sum = 0
 for i in range(len(out)):
@@ -135,7 +134,6 @@ for hand in hands:
 joker_out = []
 for each in joker_hand_types:
     joker_hand_types[each].sort()
-    print(joker_hand_types[each])
     joker_out.extend(joker_hand_types[each])
 joker_sum = 0
 for i in range(len(joker_out)):
