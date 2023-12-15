@@ -10,6 +10,7 @@ part2 = 0
 for each in hists:
     forward_diffs = [each[-1]]
     reverse_diffs = [each[0]]
+
     while True:
         tmp = []
         for i in range(len(each) - 1):
@@ -19,7 +20,9 @@ for each in hists:
         forward_diffs.append(tmp[-1])
         reverse_diffs.insert(0, tmp[0])
         each = tmp
+
     part1 += sum(forward_diffs)
+
     back = 0
     for each in reverse_diffs:
         back = each - back
